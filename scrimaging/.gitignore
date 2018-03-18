@@ -1,6 +1,5 @@
 ### OS ###
-.DS_Store
-.DS_Store?
+*DS_Store*
 .Spotlight-V100
 .Trashes
 
@@ -46,3 +45,4 @@ tmp/
 .scala_dependencies
 .worksheet
 /images/output
+/.idea/

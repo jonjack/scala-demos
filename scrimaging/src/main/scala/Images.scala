@@ -1,28 +1,132 @@
 import com.sksamuel.scrimage._
 import com.sksamuel.scrimage.ScaleMethod._
-import java.io.File
+import java.io.{File, FileInputStream, FileOutputStream}
 
-object images {
+import com.sksamuel.scrimage.nio.{JpegWriter, PngWriter}
 
-  def main(args: Array[String]): Unit = {
-    
+//implicit val jpgWriter = JpegWriter().withCompression(0) // No compression
+//implicit val jpgWriter = JpegWriter().withCompression(1) // Min compression
+//implicit val jpgWriter = JpegWriter().withCompression(5) // Medium compression
+//implicit val jpgWriter = JpegWriter().withCompression(9) // Max compression
+//implicit val jpgWriter = JpegWriter.NoCompression
+//implicit val jpgWriter = JpegWriter.MinCompression
+//implicit val jpgWriter = JpegWriter.MaxCompression
 
-    val barracuda = Image.fromFile(new File("./images/original/carp.jpg"))
+//implicit val pngWriter = PngWriter().withCompression(0) // No compression
+//implicit val pngWriter = PngWriter().withCompression(1) // Min compression
+//implicit val pngWriter = PngWriter().withCompression(5) // Medium compression
+//implicit val pngWriter = PngWriter().withCompression(9) // Max compression
+//implicit val pngWriter = PngWriter.NoCompression
+//implicit val pngWriter = PngWriter.MinCompression
+//implicit val pngWriter = PngWriter.MaxCompression
 
+object images extends App {
+
+  // config
+  val compressionFactor = 0
+  val width = 1000
+
+  // paths
+  val inpath = "./images/original"
+  val outpath = "./images/output"
+  val compression = s"$compressionFactor-compression"
+  //val compression = "no-compression"
+
+  // source
+  val barracuda = Image.fromFile(new File(s"$inpath/barracuda.jpg"))
+
+  // output
+  transformJpgs
+  transformPngs
+
+  def transformJpgs = {
+    //implicit val jpgWriter = JpegWriter().withCompression(compressionFactor)
+    val meta = s"$compression.jpg"
+    def file(name: String): File = new File(s"$outpath/$name-$meta")
+    barracuda.scaleToWidth(width, FastScale).output(file("barracuda-fastscale"))
+    barracuda.scaleToWidth(width, Lanczos3).output(file("barracuda-lanczos3"))
+    barracuda.scaleToWidth(width, BSpline).output(file("barracuda-bspline"))
+    barracuda.scaleToWidth(width, Bilinear).output(file("barracuda-bilinear"))
+    barracuda.scaleToWidth(width, Bicubic).output(file("barracuda-bicubic"))
+  }
+
+  def transformPngs = {
+    implicit val pngWriter = PngWriter().withCompression(compressionFactor)
+
+    val meta = s"$compression.png"
+    def file(name: String): File = new File(s"$outpath/$name-$meta")
+    barracuda.scaleToWidth(width, FastScale).output(file("barracuda-fastscale"))
+    barracuda.scaleToWidth(width, Lanczos3).output(file("barracuda-lanczos3"))
+    barracuda.scaleToWidth(width, BSpline).output(file("barracuda-bspline"))
+    barracuda.scaleToWidth(width, Bilinear).output(file("barracuda-bilinear"))
+    barracuda.scaleToWidth(width, Bicubic).output(file("barracuda-bicubic"))
+
+  }
+
+
+
+
+
+    //val permit = Image.fromFile(new File("./images/original/permit.jpg"))
+
+    /*
+    val permitin = Image.fromStream(new FileInputStream("./images/original/permit.jpg"))
+    val permitout = new FileOutputStream("./images/original/permit.jpg")
+
+    permitin.scaleToWidth(1000, FastScale).output(permitout)
+*/
+
+
+    //permit.scale(0.75, Bicubic).output(new File("./images/output/permit-bicubic-7%"))
+    //permit.scale(0.25, Bicubic).output(new File("./images/output/permit-bicubic-25%"))
+
+    //implicit val writer = JpegWriter().withCompression(0).withProgressive(true)
+
+    //val writer = JpegWriter().withCompression(40).withProgressive(true)
+
+    //permit.output(new File("./images/output/permit-comp-50.jpg"))(writer)
+
+    //permit.output(new File("./images/output/permit-comp-50-x"))
+
+    //implicit val progWriter = JpegWriter().withCompression(50).withProgressive(true)
+    //permit.output(new File("./images/output/permit-comp-50%-prog.jpg"))
+
+    //permit.scaleToWidth(1000, scaleMethod = Bicubic)
+
+    //permit.scaleToWidth(1000, FastScale).output(new File("./images/output/permit-FastScale-x"))
+
+    //permit.scaleToWidth(1000, FastScale).output(new File("./images/output/permit-FastScale.jpg"))
+    //permit.scaleToWidth(1000, FastScale).output(new File("./images/output/permit-FastScale.png"))
+
+    /*
+    permit.scaleToWidth(1000, Lanczos3).output(new File("./images/output/permit-Lanczos3.jpg"))
+    permit.scaleToWidth(1000, BSpline).output(new File("./images/output/permit-BSpline.jpg"))
+    permit.scaleToWidth(1000, Bilinear).output(new File("./images/output/permit-Bilinear.jpg"))
+    permit.scaleToWidth(1000, Bicubic).output(new File("./images/output/permit-Bicubic.jpg"))
+
+    permit.scaleToWidth(1000, FastScale).output(new File("./images/output/permit-FastScale.jpg"))
+    permit.scaleToWidth(1000, Lanczos3).output(new File("./images/output/permit-Lanczos3.jpg"))
+    permit.scaleToWidth(1000, BSpline).output(new File("./images/output/permit-BSpline.jpg"))
+    permit.scaleToWidth(1000, Bilinear).output(new File("./images/output/permit-Bilinear.jpg"))
+    permit.scaleToWidth(1000, Bicubic).output(new File("./images/output/permit-Bicubic.jpg"))
+
+*/
+    /**
     // Try JPG
-    barracuda.scaleTo(1000, 600, FastScale).output(new File("./images/output/carp-FastScale.jpg"))    
-    barracuda.scaleTo(1000, 600, Lanczos3).output(new File("./images/output/carp-Lanczos3.jpg"))    
-    barracuda.scaleTo(1000, 600, BSpline).output(new File("./images/output/carp-BSpline.jpg"))     
-    barracuda.scaleTo(1000, 600, Bilinear).output(new File("./images/output/carp-Bilinear.jpg"))   
-    barracuda.scaleTo(1000, 600, Bicubic).output(new File("./images/output/carp-Bicubic.jpg"))      
+    barracuda.scaleTo(1000, 600, FastScale).output(new File("./images/output/barracuda-FastScale.jpg"))
+    barracuda.scaleTo(1000, 600, Lanczos3).output(new File("./images/output/barracuda-Lanczos3.jpg"))
+    barracuda.scaleTo(1000, 600, BSpline).output(new File("./images/output/barracuda-BSpline.jpg"))
+    barracuda.scaleTo(1000, 600, Bilinear).output(new File("./images/output/barracuda-Bilinear.jpg"))
+    barracuda.scaleTo(1000, 600, Bicubic).output(new File("./images/output/barracuda-Bicubic.jpg"))
     
     // Try PNG
-    barracuda.scaleTo(1000, 600, FastScale).output(new File("./images/output/carp-FastScale.png"))    
-    barracuda.scaleTo(1000, 600, Lanczos3).output(new File("./images/output/carp-Lanczos3.png"))    
-    barracuda.scaleTo(1000, 600, BSpline).output(new File("./images/output/carp-BSpline.png"))     
-    barracuda.scaleTo(1000, 600, Bilinear).output(new File("./images/output/carp-Bilinear.png"))  
-    barracuda.scaleTo(1000, 600, Bicubic).output(new File("./images/output/carp-Bicubic.png"))     
+    barracuda.scaleTo(1000, 600, FastScale).output(new File("./images/output/barracuda-FastScale.png"))
+    barracuda.scaleTo(1000, 600, Lanczos3).output(new File("./images/output/barracuda-Lanczos3.png"))
+    barracuda.scaleTo(1000, 600, BSpline).output(new File("./images/output/barracuda-BSpline.png"))
+    barracuda.scaleTo(1000, 600, Bilinear).output(new File("./images/output/barracuda-Bilinear.png"))
+    barracuda.scaleTo(1000, 600, Bicubic).output(new File("./images/output/barracuda-Bicubic.png"))
 
+    barracuda.scale(0.5, Bicubic).output(new File("./images/output/barracuda-Bicubic.png"))
 
     val perch = Image.fromFile(new File("./images/original/perch.jpg"))
     
@@ -118,7 +222,7 @@ object images {
     whiteshark.scaleToWidth(800, BSpline).output(new File("./images/output/whiteshark-800-BSpline.jpg"))
     whiteshark.scaleToWidth(800, Bilinear).output(new File("./images/output/whiteshark-800-Bilinear.jpg"))
     whiteshark.scaleToWidth(800, Bicubic).output(new File("./images/output/whiteshark-800-Bicubic.jpg"))
-    
-  }
+
+      **/
 
 }
